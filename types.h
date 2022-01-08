@@ -88,7 +88,7 @@ struct mat3
     }
 
     
-}
+};
 
 struct Particle {
     float4 pos;
