@@ -54,7 +54,7 @@ LUA_FUNCTION(RenderParticles)
 	LUA->PushSpecial(SPECIAL_GLOB);
 	LUA->GetField(-1, "render");
 
-	mat3 Rotation = new mat3(dir)->Transpose();
+	mat3 Rotation(dir);
 
 	float particleRadius = FLEX_Simulation->radius;
 
@@ -64,7 +64,7 @@ LUA_FUNCTION(RenderParticles)
 	//loop thru all particles, any that we cannot see are not rendered
 	for (int i = 0; i < ParticleCount; i++) {
 		float3 thisPos = float3(particleBufferHost[i]);
-		float3 localPosition = (float3(particleBufferHost) - pos) * Rotation;
+		float3 localPosition = Rotation * (float3(particleBufferHost[i]) - pos);
 
 		//calculate distance from camera
 		float dist = localPosition.x;
