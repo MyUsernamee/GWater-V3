@@ -102,7 +102,7 @@ struct mat3
 
     }
 
-    mat3 Transpose() {
+    void Transpose() {
         column1 = float3(column1.x, column2.x, column3.x);
         column2 = float3(column1.y, column2.y, column3.y);
         column3 = float3(column1.z, column2.z, column3.z);
