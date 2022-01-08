@@ -65,9 +65,7 @@ LUA_FUNCTION(RenderParticles) {
 
 	// Create grid for storing depth
 	bool grid[128][64]{};
-
-
-	float particleRadius = FLEX_Simulation->radius;
+	
 	int numParticlesRendered = 0;
 	//loop thru all particles, any that we cannot see are not rendered
 	for (int i = 0; i < ParticleCount; i++) {
