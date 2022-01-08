@@ -43,14 +43,14 @@ void LUA_Print(char* text)
 ////////// LUA FUNCTIONS /////////////
 //renders particles
 LUA_FUNCTION(RenderParticles) {
-	LUA->CheckType(-1, Type::Vector);	//dir left
-	LUA->CheckType(-2, Type::Vector);	//dir right
-	LUA->CheckType(-3, Type::Vector);	//dir down
+	LUA->CheckType(-1, Type::Number);	//dir fov
+	LUA->CheckType(-2, Type::Vector);	//dir forward
+	LUA->CheckType(-3, Type::Vector);	//dir right
 	LUA->CheckType(-4, Type::Vector);	//dir up
 	LUA->CheckType(-5, Type::Vector);	//pos
 
 	float3 directionArray[4];
-	for (int i = 0; i < 4; i++)
+	for (int i = 1; i < 4; i++)
 		directionArray[i] = LUA->GetVector(-i - 1);
 	float3 pos = float3(LUA->GetVector(-5));
 
@@ -58,9 +58,9 @@ LUA_FUNCTION(RenderParticles) {
 	LUA->PushSpecial(SPECIAL_GLOB);
 	LUA->GetField(-1, "render");
 
-	float3 forward = directionArray[1].Cross(directionArray[3]).Normalize();
+	float3 forward = directionArray[0].Normalize();
 	float3 right = directionArray[1].Normalize();
-	float3 up = directionArray[3].Normalize();
+	float3 up = directionArray[2].Normalize();
 
 	mat3 Rotation;
 	Rotation.ConstructLocalSpace(right, up, forward);
@@ -99,14 +99,7 @@ LUA_FUNCTION(RenderParticles) {
 		int gridX = x + 64;
 		int gridY = y + 32;
 
-		bool skip = false;
-		for (int i = 0; i < 4; i++) {
-			if (Dot(thisPos - pos, directionArray[i]) < 0) {
-				skip = true;
-			}
-		}
-
-		if (skip || DistanceSquared(thisPos, pos) > RenderDistance || grid[gridX, gridY]) continue;
+		if (DistanceSquared(thisPos, pos) > RenderDistance || grid[gridX, gridY]) continue;
 
 		grid[gridX][gridY] = true;
 
