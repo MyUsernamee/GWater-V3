@@ -61,16 +61,21 @@ LUA_FUNCTION(RenderParticles) {
 
 	mat3 Rotation(directionArray[1], directionArray[3], directionArray[1].Cross(directionArray[3]));
 
+	LUA_Print("Rotation: " + std::to_string(Rotation.column1.x) + " " + std::to_string(Rotation.column1.y) + " " + std::to_string(Rotation.column1.z) + " " + std::to_string(Rotation.column2.x) + " " + std::to_string(Rotation.column2.y) + " " + std::to_string(Rotation.column2.z) + " " + std::to_string(Rotation.column3.x) + " " + std::to_string(Rotation.column3.y) + " " + std::to_string(Rotation.column3.z));
+	LUA_Print("Position: " + std::to_string(pos.x) + " " + std::to_string(pos.y) + " " + std::to_string(pos.z));
+
 	float particleRadius = FLEX_Simulation->radius;
 
 	// Create grid for storing depth
 	bool grid[128][64]{};
-	
+
 	int numParticlesRendered = 0;
 	//loop thru all particles, any that we cannot see are not rendered
 	for (int i = 0; i < ParticleCount; i++) {
 		float3 thisPos = float3(particleBufferHost[i]);
 		float3 localPosition = Rotation * (float3(particleBufferHost[i]) - pos);
+
+		LUA_Print("Local Position: " + std::to_string(pos.x) + " " + std::to_string(pos.y) + " " + std::to_string(pos.z));
 
 		//calculate distance from camera
 		float dist = localPosition.x;
