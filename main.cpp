@@ -3,6 +3,7 @@
 #include "types.h"
 #include <string>
 #include "GarrysMod/Lua/LuaBase.h"
+#include <math.h>
 
 using namespace GarrysMod::Lua;
 
@@ -58,6 +59,8 @@ LUA_FUNCTION(RenderParticles) {
 	LUA->PushSpecial(SPECIAL_GLOB);
 	LUA->GetField(-1, "render");
 
+	float fov = LUA->GetNumber(-1);
+
 	float3 forward = directionArray[0].Normalize();
 	float3 right = directionArray[1].Normalize();
 	float3 up = directionArray[2].Normalize();
@@ -65,11 +68,6 @@ LUA_FUNCTION(RenderParticles) {
 	mat3 Rotation;
 	Rotation.ConstructLocalSpace(right, up, forward);
 	Rotation.Transpose();
-
-	LUA_Print("Rotation: " + std::to_string(Rotation.column1.x) + " " + std::to_string(Rotation.column1.y) + " " + std::to_string(Rotation.column1.z) + " " + std::to_string(Rotation.column2.x) + " " + std::to_string(Rotation.column2.y) + " " + std::to_string(Rotation.column2.z) + " " + std::to_string(Rotation.column3.x) + " " + std::to_string(Rotation.column3.y) + " " + std::to_string(Rotation.column3.z));
-	LUA_Print("Up: " + std::to_string(up.x) + " " + std::to_string(up.y) + " " + std::to_string(up.z));
-	LUA_Print("Right: " + std::to_string(right.x) + " " + std::to_string(right.y) + " " + std::to_string(right.z));
-	LUA_Print("Forward: " + std::to_string(forward.x) + " " + std::to_string(forward.y) + " " + std::to_string(forward.z));
 
 	float particleRadius = FLEX_Simulation->radius;
 
@@ -80,26 +78,23 @@ LUA_FUNCTION(RenderParticles) {
 	//loop thru all particles, any that we cannot see are not rendered
 	for (int i = 0; i < ParticleCount; i++) {
 		float3 thisPos = float3(particleBufferHost[i]);
-		float3 localPosition = (float3(particleBufferHost[i]) - pos);
-
-		LUA_Print("Local Position Without Rotation: " + std::to_string(localPosition.x) + " " + std::to_string(localPosition.y) + " " + std::to_string(localPosition.z));
-		localPosition = Rotation * localPosition;
-		LUA_Print("Local Position With Rotation: " + std::to_string(localPosition.x) + " " + std::to_string(localPosition.y) + " " + std::to_string(localPosition.z));
-
-		
+		float3 localPosition = Rotation * (float3(particleBufferHost[i]) - pos);
 
 		//calculate distance from camera
 		float dist = localPosition.x;
 
 		//Get 2d Position
-		int x = (int)(localPosition.y / dist);
-		int y = (int)(localPosition.z / dist);
+		int x = (int)(localPosition.y / ( dist * std::tan(fov / 2) ) * 64);
+		int y = (int)(localPosition.z / ( dist * std::tan(fov / 2) ) * 64);
 
 		//Get the grid position
 		int gridX = x + 64;
 		int gridY = y + 32;
 
-		if (DistanceSquared(thisPos, pos) > RenderDistance || grid[gridX, gridY]) continue;
+		LUA_Print("Grid Occupied: " + std::to_string(grid[gridX][gridY]));
+		LUA_Print("x: " + std::to_string(x) + " y: " + std::to_string(y));
+
+		if (dist > 0 ||DistanceSquared(thisPos, pos) > RenderDistance || grid[gridX][gridY]) continue;
 
 		grid[gridX][gridY] = true;
 
