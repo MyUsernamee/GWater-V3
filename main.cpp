@@ -59,7 +59,7 @@ LUA_FUNCTION(RenderParticles)
 	float particleRadius = FLEX_Simulation->radius;
 
 	// Create grid for storing depth
-	bool grid[128][64];
+	bool grid[128][64]{};
 
 	//loop thru all particles, any that we cannot see are not rendered
 	for (int i = 0; i < ParticleCount; i++) {
@@ -79,7 +79,7 @@ LUA_FUNCTION(RenderParticles)
 
 		if (Dot(thisPos - pos, dir) < 0 || dist > RenderDistance || grid[gridX, gridY]) continue;
 
-		grid[gridX, gridY] = true;
+		grid[gridX][gridY] = true;
 
 		Vector gmodPos;
 		gmodPos.x = thisPos.x;
