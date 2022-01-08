@@ -66,12 +66,23 @@ struct mat3
     mat3(float3 lookingDirection){
 
         float3 up = float3(0, 0, 1);
-        float3 right = lookingDirection.Cross(up);
-        up = right.Cross(lookingDirection);
+        float3 xaxis = lookingDirection.Cross(up);
+        float3 yaxis = xaxis.Cross(lookingDirection);
 
-        column1 = right.Normalize();
-        column2 = up.Normalize();
-        column3 = lookingDirection.Normalize();
+        xaxis = xaxis.Normalize();
+        yaxis = yaxis.Normalize();
+
+        column1.x = xaxis.x;
+        column1.y = yaxis.x;
+        column1.z = lookingDirection.x;
+
+        column2.x = xaxis.y;
+        column2.y = yaxis.y;
+        column2.z = lookingDirection.y;
+
+        column3.x = xaxis.z;
+        column3.y = yaxis.z;
+        column3.z = lookingDirection.z;
 
     }
 
