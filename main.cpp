@@ -58,8 +58,13 @@ LUA_FUNCTION(RenderParticles) {
 	LUA->PushSpecial(SPECIAL_GLOB);
 	LUA->GetField(-1, "render");
 
+	float3 forward = directionArray[1].Cross(directionArray[3]).Normalize();
+	float3 right = directionArray[1].Normalize();
+	float3 up = directionArray[3].Normalize();
 
-	mat3 Rotation(directionArray[1].Normalize(), directionArray[3].Normalize(), directionArray[1].Cross(directionArray[3]).Normalize());
+	mat3 Rotation;
+	Rotation.ConstructLocalSpace(right, up, forward);
+	Rotation.Transpose();
 
 	LUA_Print("Rotation: " + std::to_string(Rotation.column1.x) + " " + std::to_string(Rotation.column1.y) + " " + std::to_string(Rotation.column1.z) + " " + std::to_string(Rotation.column2.x) + " " + std::to_string(Rotation.column2.y) + " " + std::to_string(Rotation.column2.z) + " " + std::to_string(Rotation.column3.x) + " " + std::to_string(Rotation.column3.y) + " " + std::to_string(Rotation.column3.z));
 	LUA_Print("Position: " + std::to_string(pos.x) + " " + std::to_string(pos.y) + " " + std::to_string(pos.z));

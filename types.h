@@ -86,6 +86,22 @@ struct mat3
 
     }
 
+    void ConstructLocalSpace(float3 xaxis, float3 yaxis, float3 lookingDirection){
+
+        column1.x = xaxis.x;
+        column1.y = yaxis.x;
+        column1.z = lookingDirection.x;
+
+        column2.x = xaxis.y;
+        column2.y = yaxis.y;
+        column2.z = lookingDirection.y;
+
+        column3.x = xaxis.z;
+        column3.y = yaxis.z;
+        column3.z = lookingDirection.z;
+
+    }
+
     mat3 Transpose() {
         column1 = float3(column1.x, column2.x, column3.x);
         column2 = float3(column1.y, column2.y, column3.y);
