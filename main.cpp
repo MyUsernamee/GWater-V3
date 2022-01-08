@@ -50,8 +50,8 @@ LUA_FUNCTION(RenderParticles) {
 	LUA->CheckType(-5, Type::Vector);	//pos
 
 	float3 directionArray[4];
-	for (int i = 1; i < 4; i++)
-		directionArray[i] = LUA->GetVector(-i - 1);
+	for (int i = 0; i < 3; i++)
+		directionArray[i] = LUA->GetVector(-i - 2);
 	float3 pos = float3(LUA->GetVector(-5));
 
 	LUA->Pop(5);
