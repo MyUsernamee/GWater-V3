@@ -21,7 +21,6 @@ if SERVER then
 		net.Start("GWATER_SWIMMING")
 			net.WriteEntity(ply)
 			net.WriteBool(bool)
-			net.WriteFloat(math.Clamp(spd, 0, 8))
 		net.Broadcast()
 	end)
 	
@@ -88,33 +87,7 @@ else
 	net.Receive("GWATER_SWIMMING", function()
 		local ply = net.ReadEntity()
 		local swim = net.ReadBool()
-		local secr = net.ReadFloat()
 		ply.GWATER_SWIMMING = swim
-		ply.GWATER_SPEED = 0
-	end)
-
-	local water = false
-	local water_last = false
-	local water_sound_id = 0
-	
-	timer.Create("GWaterUpdateSwimming", 0.3, 0, function()
-		if not gwater or not gwater.HasModule then return end
-		water = gwater.ParticlesNear(EyePos(), 0.7) > 1
-	end)
-	
-	hook.Add("Think", "GWater.Sound", function()
-		if not gwater or not gwater.HasModule then return end
-		
-		if water ~= water_last then
-			water_last = water
-			LocalPlayer():SetDSP(water and 14 or 0)
-			
-			if water then
-				water_sound_id = LocalPlayer():StartLoopingSound("ambient/water/underwater.wav")
-			else
-				LocalPlayer():StopLoopingSound(water_sound_id)
-			end
-		end
 	end)
 end
 
@@ -140,13 +113,13 @@ hook.Add("Move", "GWater.Swimming", function(ply, move)
     (ang:Right() * move:GetSideSpeed()) +
     (ang:Up() * move:GetUpSpeed())
 
-    if bit.band(move:GetButtons(), IN_JUMP) ~= 0 then
-        acel.z = acel.z + ply:GetMaxSpeed()
-    end
-
     local aceldir = acel:GetNormalized()
     local acelspeed = math.min(acel:Length(), ply:GetMaxSpeed()) * ply.GWATER_SPEED
     acel = aceldir * acelspeed * 2
+
+	if bit.band(move:GetButtons(), IN_JUMP) ~= 0 then
+        acel.z = acel.z + ply:GetMaxSpeed()
+    end
 
     vel = vel + acel * FrameTime()
     vel = vel * (1 - FrameTime() * 2)
@@ -155,7 +128,7 @@ hook.Add("Move", "GWater.Swimming", function(ply, move)
     local gravity = pgrav * gravity_convar:GetFloat() * 0.5
     vel.z = vel.z + FrameTime() * gravity
 
-    move:SetVelocity(vel)
+    move:SetVelocity(vel * 0.99)
 end)
 
 hook.Add("FinishMove", "GWater.Swimming", function(ply, move)
@@ -164,6 +137,6 @@ hook.Add("FinishMove", "GWater.Swimming", function(ply, move)
     local pgrav = ply:GetGravity() == 0 and 1 or ply:GetGravity()
     local gravity = pgrav * gravity_convar:GetFloat() * 0.5
     
-    vel.z = vel.z + (gravity + math.sin(CurTime() * 2) * 6) * FrameTime()
+    vel.z = vel.z + FrameTime() * gravity
     move:SetVelocity(vel)
 end)
