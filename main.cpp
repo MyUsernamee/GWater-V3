@@ -76,6 +76,10 @@ LUA_FUNCTION(RenderParticles)
 		//Get the grid position
 		int gridX = x + 64;
 		int gridY = y + 32;
+		
+		//Print the Rotation Matrix and Position
+		LUA_Print("Rotation Matrix: " + std::to_string(Rotation.column1.x) + " " + std::to_string(Rotation.column1.y) + " " + std::to_string(Rotation.column1.z) + " " + std::to_string(Rotation.column2.x) + " " + std::to_string(Rotation.column2.y) + " " + std::to_string(Rotation.column2.z) + " " + std::to_string(Rotation.column3.x) + " " + std::to_string(Rotation.column3.y) + " " + std::to_string(Rotation.column3.z));
+		LUA_Print("Position: " + std::to_string(localPosition.x) + " " + std::to_string(localPosition.y) + " " + std::to_string(localPosition.z));
 
 		if (Dot(thisPos - pos, dir) < 0 || dist > RenderDistance || grid[gridX, gridY]) continue;
 
