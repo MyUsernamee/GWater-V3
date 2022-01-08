@@ -83,7 +83,7 @@ LUA_FUNCTION(RenderParticles)
 
 		//Print the local position without rotation
 		LUA_Print("Local Position: " + std::to_string(thisPos.x - pos.x) + " " + std::to_string(thisPos.y - pos.y) + " " + std::to_string(thisPos.z - pos.z));
-		Lua_Print("Player Position: " + std::to_string(pos.x) + " " + std::to_string(pos.y) + " " + std::to_string(pos.z));
+		LUA_Print("Player Position: " + std::to_string(pos.x) + " " + std::to_string(pos.y) + " " + std::to_string(pos.z));
 
 		if (Dot(thisPos - pos, dir) < 0 || dist > RenderDistance || grid[gridX, gridY]) continue;
 
