@@ -39,28 +39,36 @@ void LUA_Print(char* text)
 }
 
 
+
 ////////// LUA FUNCTIONS /////////////
 //renders particles
-LUA_FUNCTION(RenderParticles) 
-{
-	//get headpos and headang
-	LUA->CheckType(1, Type::Vector);
-	LUA->CheckType(2, Type::Vector);
+LUA_FUNCTION(RenderParticles) {
+	LUA->CheckType(-1, Type::Vector);	//dir left
+	LUA->CheckType(-2, Type::Vector);	//dir right
+	LUA->CheckType(-3, Type::Vector);	//dir down
+	LUA->CheckType(-4, Type::Vector);	//dir up
+	LUA->CheckType(-5, Type::Vector);	//pos
 
-	float3 dir = float3(LUA->GetVector());
-	float3 pos = float3(LUA->GetVector(-2));
+	float3 directionArray[4];
+	for (int i = 0; i < 4; i++)
+		directionArray[i] = LUA->GetVector(-i - 1);
+	float3 pos = float3(LUA->GetVector(-5));
 
-	LUA->Pop(2);
+	LUA->Pop(5);
 	LUA->PushSpecial(SPECIAL_GLOB);
 	LUA->GetField(-1, "render");
 
-	mat3 Rotation(dir);
+
+	mat3 Rotation(directionArray[1], directionArray[3], directionArray[1].Cross(directionArray[3]));
 
 	float particleRadius = FLEX_Simulation->radius;
 
 	// Create grid for storing depth
 	bool grid[128][64]{};
 
+
+	float particleRadius = FLEX_Simulation->radius;
+	int numParticlesRendered = 0;
 	//loop thru all particles, any that we cannot see are not rendered
 	for (int i = 0; i < ParticleCount; i++) {
 		float3 thisPos = float3(particleBufferHost[i]);
@@ -76,16 +84,15 @@ LUA_FUNCTION(RenderParticles)
 		//Get the grid position
 		int gridX = x + 64;
 		int gridY = y + 32;
-		
-		//Print the Rotation Matrix and Position
-		LUA_Print("Rotation Matrix: " + std::to_string(Rotation.column1.x) + " " + std::to_string(Rotation.column1.y) + " " + std::to_string(Rotation.column1.z) + " " + std::to_string(Rotation.column2.x) + " " + std::to_string(Rotation.column2.y) + " " + std::to_string(Rotation.column2.z) + " " + std::to_string(Rotation.column3.x) + " " + std::to_string(Rotation.column3.y) + " " + std::to_string(Rotation.column3.z));
-		LUA_Print("Position: " + std::to_string(localPosition.x) + " " + std::to_string(localPosition.y) + " " + std::to_string(localPosition.z));
 
-		//Print the local position without rotation
-		LUA_Print("Local Position: " + std::to_string(thisPos.x - pos.x) + " " + std::to_string(thisPos.y - pos.y) + " " + std::to_string(thisPos.z - pos.z));
-		LUA_Print("Player Position: " + std::to_string(pos.x) + " " + std::to_string(pos.y) + " " + std::to_string(pos.z));
+		bool skip = false;
+		for (int i = 0; i < 4; i++) {
+			if (Dot(thisPos - pos, directionArray[i]) < 0) {
+				skip = true;
+			}
+		}
 
-		if (Dot(thisPos - pos, dir) < 0 || dist > RenderDistance || grid[gridX, gridY]) continue;
+		if (skip || DistanceSquared(thisPos, pos) > RenderDistance || grid[gridX, gridY]) continue;
 
 		grid[gridX][gridY] = true;
 
@@ -100,10 +107,12 @@ LUA_FUNCTION(RenderParticles)
 		LUA->PushNumber(particleRadius);
 		LUA->PushNumber(particleRadius);
 		LUA->Call(3, 0);	//pops literally everything above except render and _G
+
+		numParticlesRendered++;
 	}
 
 	LUA->Pop(2); //pop _G and render
-	LUA->PushNumber(ParticleCount);
+	LUA->PushNumber(numParticlesRendered);
 
 	return 1;
 }
