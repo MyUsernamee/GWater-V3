@@ -39,11 +39,11 @@ if CLIENT then
 end
 
 function TOOL:LeftClick(trace)
-	if CLIENT then
+	if SERVER then
 		net.Start("GWATER_REMOVE")
 			net.WriteVector(trace.HitPos)
-			net.WriteInt(self.DisplaySize * self.DisplaySize, 16)
-		net.SendToServer()
+			net.WriteInt(500, 16)
+		net.Broadcast()
 	end
 
 	return true
