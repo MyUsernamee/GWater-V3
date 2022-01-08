@@ -53,6 +53,7 @@ struct float3 {
 };
 
 //Mat3 structure, holds 3 float3s
+//Mat3 structure, holds 3 float3s
 struct mat3
 {
     float3 column1;
@@ -62,7 +63,6 @@ struct mat3
     mat3(float3 c1, float3 c2, float3 c3) : column1(c1), column2(c2), column3(c3) {};
     mat3() : column1(float3(0, 0, 0)), column2(float3(0, 0, 0)), column3(float3(0, 0, 0)) {};
     mat3(float l) : column1(float3(l, l, l)), column2(float3(l, l, l)), column3(float3(l, l, l)) {};
-    mat3(float4 c1, float4 c2, float4 c3) : column1(float3(c1.x, c1.y, c1.z)), column2(float3(c2.x, c2.y, c2.z)), column3(float3(c3.x, c3.y, c3.z)) {};
     mat3(float3 lookingDirection){
 
         float3 up = float3(0, 0, 1);
@@ -72,33 +72,33 @@ struct mat3
         xaxis = xaxis.Normalize();
         yaxis = yaxis.Normalize();
 
-        column1.x = xaxis.x;
-        column1.y = yaxis.x;
-        column1.z = lookingDirection.x;
+        column1.x = lookingDirection.x; // This should be 1
+        column1.y = xaxis.x; // This should be 0
+        column1.z = yaxis.x; // This should be 0
 
-        column2.x = xaxis.y;
-        column2.y = yaxis.y;
-        column2.z = lookingDirection.y;
+        column2.x = lookingDirection.y; // This should be 0
+        column2.y = xaxis.y; // This should be 1
+        column2.z = yaxis.y; // This should be 0
 
-        column3.x = xaxis.z;
-        column3.y = yaxis.z;
-        column3.z = lookingDirection.z;
+        column3.x = lookingDirection.z; // This should be 0
+        column3.y = xaxis.z; // This should be 0
+        column3.z = yaxis.z; // This should be 1
 
     }
 
     void ConstructLocalSpace(float3 xaxis, float3 yaxis, float3 lookingDirection){
 
-        column1.x = xaxis.x;
-        column1.y = yaxis.x;
-        column1.z = lookingDirection.x;
+        column1.x = lookingDirection.x; // This should be 1
+        column1.y = xaxis.x; // This should be 0
+        column1.z = yaxis.x; // This should be 0
 
-        column2.x = xaxis.y;
-        column2.y = yaxis.y;
-        column2.z = lookingDirection.y;
+        column2.x = lookingDirection.y; // This should be 0
+        column2.y = xaxis.y; // This should be 1
+        column2.z = yaxis.y; // This should be 0
 
-        column3.x = xaxis.z;
-        column3.y = yaxis.z;
-        column3.z = lookingDirection.z;
+        column3.x = lookingDirection.z; // This should be 0
+        column3.y = xaxis.z; // This should be 0
+        column3.z = yaxis.z; // This should be 1
 
     }
 
