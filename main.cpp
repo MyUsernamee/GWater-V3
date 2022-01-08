@@ -59,7 +59,7 @@ LUA_FUNCTION(RenderParticles) {
 	LUA->GetField(-1, "render");
 
 
-	mat3 Rotation(directionArray[1], directionArray[3], directionArray[1].Cross(directionArray[3]));
+	mat3 Rotation(directionArray[1].Normalize(), directionArray[3].Normalize(), directionArray[1].Cross(directionArray[3]).Normalize());
 
 	LUA_Print("Rotation: " + std::to_string(Rotation.column1.x) + " " + std::to_string(Rotation.column1.y) + " " + std::to_string(Rotation.column1.z) + " " + std::to_string(Rotation.column2.x) + " " + std::to_string(Rotation.column2.y) + " " + std::to_string(Rotation.column2.z) + " " + std::to_string(Rotation.column3.x) + " " + std::to_string(Rotation.column3.y) + " " + std::to_string(Rotation.column3.z));
 	LUA_Print("Position: " + std::to_string(pos.x) + " " + std::to_string(pos.y) + " " + std::to_string(pos.z));
@@ -75,7 +75,7 @@ LUA_FUNCTION(RenderParticles) {
 		float3 thisPos = float3(particleBufferHost[i]);
 		float3 localPosition = Rotation * (float3(particleBufferHost[i]) - pos);
 
-		LUA_Print("Local Position: " + std::to_string(pos.x) + " " + std::to_string(pos.y) + " " + std::to_string(pos.z));
+		LUA_Print("Local Position: " + std::to_string(localPosition.x) + " " + std::to_string(localPosition.y) + " " + std::to_string(localPosition.z));
 
 		//calculate distance from camera
 		float dist = localPosition.x;
