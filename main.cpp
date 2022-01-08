@@ -67,7 +67,9 @@ LUA_FUNCTION(RenderParticles) {
 	Rotation.Transpose();
 
 	LUA_Print("Rotation: " + std::to_string(Rotation.column1.x) + " " + std::to_string(Rotation.column1.y) + " " + std::to_string(Rotation.column1.z) + " " + std::to_string(Rotation.column2.x) + " " + std::to_string(Rotation.column2.y) + " " + std::to_string(Rotation.column2.z) + " " + std::to_string(Rotation.column3.x) + " " + std::to_string(Rotation.column3.y) + " " + std::to_string(Rotation.column3.z));
-	LUA_Print("Position: " + std::to_string(pos.x) + " " + std::to_string(pos.y) + " " + std::to_string(pos.z));
+	LUA_Print("Up: " + std::to_string(up.x) + " " + std::to_string(up.y) + " " + std::to_string(up.z));
+	LUA_Print("Right: " + std::to_string(right.x) + " " + std::to_string(right.y) + " " + std::to_string(right.z));
+	LUA_Print("Forward: " + std::to_string(forward.x) + " " + std::to_string(forward.y) + " " + std::to_string(forward.z));
 
 	float particleRadius = FLEX_Simulation->radius;
 
@@ -78,9 +80,13 @@ LUA_FUNCTION(RenderParticles) {
 	//loop thru all particles, any that we cannot see are not rendered
 	for (int i = 0; i < ParticleCount; i++) {
 		float3 thisPos = float3(particleBufferHost[i]);
-		float3 localPosition = Rotation * (float3(particleBufferHost[i]) - pos);
+		float3 localPosition = (float3(particleBufferHost[i]) - pos);
 
-		LUA_Print("Local Position: " + std::to_string(localPosition.x) + " " + std::to_string(localPosition.y) + " " + std::to_string(localPosition.z));
+		LUA_Print("Local Position Without Rotation: " + std::to_string(localPosition.x) + " " + std::to_string(localPosition.y) + " " + std::to_string(localPosition.z));
+		localPosition = Rotation * localPosition;
+		LUA_Print("Local Position With Rotation: " + std::to_string(localPosition.x) + " " + std::to_string(localPosition.y) + " " + std::to_string(localPosition.z));
+
+		
 
 		//calculate distance from camera
 		float dist = localPosition.x;
