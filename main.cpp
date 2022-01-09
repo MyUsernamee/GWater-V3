@@ -97,7 +97,7 @@ LUA_FUNCTION(RenderParticles) {
 		LUA_Print("Grid Occupied: " + std::to_string(grid[gridX][gridY]));
 		LUA_Print("x: " + std::to_string(x) + " y: " + std::to_string(y));
 
-		if (dist > 0 || (x < 0 || x > 127 || y < 0 || y > 127) || DistanceSquared(thisPos, pos) > RenderDistance) continue;
+		if (dist < 0 || (x < 0 || x > 127 || y < 0 || y > 127) || DistanceSquared(thisPos, pos) > RenderDistance) continue;
 		if(grid[gridX][gridY]) continue;
 
 
