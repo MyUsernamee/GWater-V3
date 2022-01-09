@@ -89,8 +89,8 @@ LUA_FUNCTION(RenderParticles) {
 		int y = (int)(localPosition.z / ( dist * std::tan(fov / 2) ) * 64);
 
 		//Get the grid position
-		int gridX = (x + 64, 0, 127);
-		int gridY = (y + 32, 0, 63);
+		int gridX = (x + 64);
+		int gridY = (y + 32);
 
 		LUA_Print("Grid Occupied: " + std::to_string(grid[gridX][gridY]));
 		LUA_Print("x: " + std::to_string(x) + " y: " + std::to_string(y));
