@@ -5,6 +5,7 @@
 #include "GarrysMod/Lua/LuaBase.h"
 #include <cmath>
 #include <algorithm>
+#include <cstring>
 
 using namespace GarrysMod::Lua;
 
@@ -74,6 +75,7 @@ LUA_FUNCTION(RenderParticles) {
 
 	// Create grid for storing depth
 	bool grid[128][64]{};
+	memset(grid, false, sizeof(grid[0][0]) * 128 * 64);
 
 	int numParticlesRendered = 0;
 	//loop thru all particles, any that we cannot see are not rendered
@@ -95,7 +97,8 @@ LUA_FUNCTION(RenderParticles) {
 		LUA_Print("Grid Occupied: " + std::to_string(grid[gridX][gridY]));
 		LUA_Print("x: " + std::to_string(x) + " y: " + std::to_string(y));
 
-		if (dist > 0 || (x < 0 || x > 127 || y < 0 || y > 127) || DistanceSquared(thisPos, pos) > RenderDistance || grid[gridX][gridY]) continue;
+		if (dist > 0 || (x < 0 || x > 127 || y < 0 || y > 127) || DistanceSquared(thisPos, pos) > RenderDistance) continue;
+
 
 		grid[gridX][gridY] = true;
 
