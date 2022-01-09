@@ -3,7 +3,7 @@
 #include "types.h"
 #include <string>
 #include "GarrysMod/Lua/LuaBase.h"
-#include <math.h>
+#include <cmath>
 
 using namespace GarrysMod::Lua;
 
